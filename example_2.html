@@ -33,15 +33,16 @@
             DrawTree();
         });
 
+
+
         /********************  EXAMPLE: BUILD TREE FROM JSON DATA */
         
         $.each(json_example_data, function (item, value)
         {
             if (value.ID == 'ID1')
             {
-                createPerson(350, 100, value.ID, value.FullName + "\n Born " + value.BirthDate, value);
+                createPerson(350, 100, value);
                 AddFamily(value);
-                
             }
 
         });
@@ -63,12 +64,12 @@
                 {
                     motherid = value.ID;
                     var wife = getPersonByID(value.ID);
-                    createPartner(wife.ID, wife.FullName + "\nBorn " + wife.BirthDate, person.ID, wife);
+                    createPartner(wife, person.ID);
                 }
                 if (value.Type == 'HUSB') {
                     fatherid = value.ID;
                     var husb = getPersonByID(person.Relatives[rel].ID);
-                    createPartner(husb.ID, husb.FullName + "\nBorn " + husb.BirthDate, person.ID, husb);
+                    createPartner(husb, person.ID);
                 }
             });
 
@@ -84,22 +85,21 @@
 
                         if (motherid == "NONE" && fatherid != "NONE")
                         {
-                            createChild(child.ID, child.FullName + "\nBorn " + child.BirthDate, null, fatherid, child);
+                            createChild(child, null, fatherid);
                         }
                         else if (motherid != "NONE" && fatherid == "NONE")
                         {
 
-                            createChild(child.ID, child.FullName + "\nBorn " + child.BirthDate, motherid, null, child);
+                            createChild(child, motherid, null);
                         }
                         else
                         {
-                            createChild(child.ID, child.FullName + "\nBorn " + child.BirthDate, motherid, fatherid, child);
+                            createChild(child, motherid, fatherid);
                         }
 
                     AddFamily(child);
                 }
             });
-
 
         }
 
