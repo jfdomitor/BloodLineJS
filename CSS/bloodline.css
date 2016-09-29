@@ -1,0 +1,26 @@
+﻿body
+{
+     background-color:antiquewhite;
+
+}
+
+#chartcontainer
+{
+   width:3024px; 
+   height: 2768px; 
+}
+
+div.chartobject 
+{
+    background-color: lightblue;
+    border:2px solid black;
+    width:170px; 
+    height:60px;
+} 
+
+p.chartobject_paragraph
+{
+    font-family:Tahoma;
+    font-size: small;
+    margin:2px;
+}

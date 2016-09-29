@@ -1,0 +1,47 @@
+﻿<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+    <script src="Scripts/bloodlinecore-1.0.0.js"></script>
+    <script src="Scripts/bloodline-1.0.0.js"></script>
+    <script src="Scripts/jquery-3.1.0.js"></script>
+    <link href="CSS/bloodline.css" rel="stylesheet" />
+
+</head>
+<body>
+
+
+    <!-- DECLARE CHART AREA-->
+    <div id="chartcontainer"></div>
+
+    <script>
+
+
+        //REGISTER CHART AREA
+        registerBloodLineContainer('chartcontainer');
+
+        //CREATE TREE MANUALLY
+        createPerson(350, 100, 'ID1', 'Barack Hussein Obama, Sr\nBorn Apr 4, 1936');
+        createPartner('ID2', 'Stanley Ann Dunham\nBorn Nov 29 1942', 'ID1');
+        createChild('ID3', 'Barack H Obama\n Born Aug 4 1961', 'ID_2', 'ID1');
+        createPartner('ID4', 'Michelle Obama\n Born Jan 17 1974', 'ID3');
+        createChild('ID5', 'Malia Obama\n Born JUL 4 1998', 'ID4', null);
+        createChild('ID6', 'Sasha Obama\nBorn Jun 10 2001', 'ID4', null);
+
+
+
+
+        $(document).ready(function ()
+        {
+            DrawTree();
+        });
+
+        $(window).resize(function () {
+            DrawTree();
+        });
+
+    </script>
+</body>
+</html>
