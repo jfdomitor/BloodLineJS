@@ -27,11 +27,25 @@ function createRelationBox(pos_x, pos_y, id) {
 }
 
 
-function createObjectBox(pos_x, pos_y, id, label) {
+function createObjectBox(pos_x, pos_y, id, label, object_data) {
     var div = document.createElement("div");
     div.id = id;
 
-    div.setAttribute('class', 'chartobject');
+    if (typeof object_data != "undefined" && object_data.hasOwnProperty('Gender'))
+    {
+        $("#" + div.id).data("OBJECT_DATA", object_data);
+
+        if (object_data.Gender == "M")
+            div.setAttribute('class', 'malechartobject');
+        if (object_data.Gender == "F")
+            div.setAttribute('class', 'femalechartobject');
+    }
+    else
+    {
+        div.setAttribute('class', 'chartobject');
+    }
+
+  
     div.setAttribute('style', 'position:absolute; top:' + pos_y + 'px; left:' + pos_x + 'px');
     div.setAttribute('ondrop', 'handleObjectDrop(event)');
     div.setAttribute('ondragover', 'handle_Dragover(event)');
@@ -45,6 +59,8 @@ function createObjectBox(pos_x, pos_y, id, label) {
     div.appendChild(paragraph);
 
     maincontainer.append(div);
+
+   
 
     last_x = pos_x;
     last = pos_y;
