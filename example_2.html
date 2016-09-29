@@ -35,16 +35,16 @@
 
         /********************  EXAMPLE: BUILD TREE FROM JSON DATA */
         
-        for (item in json_example_data)
+        $.each(json_example_data, function (item, value)
         {
-            if (json_example_data[item].ID == 'ID1')
+            if (value.ID == 'ID1')
             {
-                createPerson(350, 100, json_example_data[item].ID, json_example_data[item].FullName + "\n Born " + json_example_data[item].BirthDate, json_example_data[item]);
-                AddFamily(json_example_data[item]);
-                break;
+                createPerson(350, 100, value.ID, value.FullName + "\n Born " + value.BirthDate, value);
+                AddFamily(value);
+                
             }
-        }
 
+        });
 
 
         function AddFamily(person)
@@ -57,65 +57,65 @@
             if (person.Gender == "F")
                 motherid = person.ID;
 
-            for (rel in person.Relatives)
+            $.each(person.Relatives, function (item, value)
             {
-                if (person.Relatives[rel].Type == 'WIFE')
+                if (value.Type == 'WIFE')
                 {
-                    motherid = person.Relatives[rel].ID;
-                    var wife = getPersonByID(person.Relatives[rel].ID);
+                    motherid = value.ID;
+                    var wife = getPersonByID(value.ID);
                     createPartner(wife.ID, wife.FullName + "\nBorn " + wife.BirthDate, person.ID, wife);
-                     break;
                 }
-                if (person.Relatives[rel].Type == 'HUSB') {
-                    fatherid = person.Relatives[rel].ID;
+                if (value.Type == 'HUSB') {
+                    fatherid = value.ID;
                     var husb = getPersonByID(person.Relatives[rel].ID);
                     createPartner(husb.ID, husb.FullName + "\nBorn " + husb.BirthDate, person.ID, husb);
-                    break;
                 }
-            }
+            });
 
 
-            for (rel in person.Relatives)
+            $.each(person.Relatives, function (item, value)
             {
-                if (person.Relatives[rel].Type == 'CHILD')
+                if (value.Type == 'CHILD')
                 {
-                    var child = getPersonByID(person.Relatives[rel].ID);
+                    var child = getPersonByID(value.ID);
 
                     if (motherid == "NONE" && fatherid == "NONE")
-                        continue;
+                        return true; //continue
 
-                    if (motherid == "NONE" && fatherid != "NONE")
-                    {
-                        createChild(child.ID, child.FullName + "\nBorn " + child.BirthDate, null, fatherid, child);
-                    }
-                    else if (motherid != "NONE" && fatherid == "NONE")
-                    {
+                        if (motherid == "NONE" && fatherid != "NONE")
+                        {
+                            createChild(child.ID, child.FullName + "\nBorn " + child.BirthDate, null, fatherid, child);
+                        }
+                        else if (motherid != "NONE" && fatherid == "NONE")
+                        {
 
-                        createChild(child.ID, child.FullName + "\nBorn " + child.BirthDate, motherid, null, child);
-                    }
-                    else
-                    {
-                        createChild(child.ID, child.FullName + "\nBorn " + child.BirthDate, motherid, fatherid, child);
-                    }
+                            createChild(child.ID, child.FullName + "\nBorn " + child.BirthDate, motherid, null, child);
+                        }
+                        else
+                        {
+                            createChild(child.ID, child.FullName + "\nBorn " + child.BirthDate, motherid, fatherid, child);
+                        }
 
                     AddFamily(child);
+                }
+            });
 
-                 }
-             }
 
         }
 
         function getPersonByID(id)
         {
-            for (item in json_example_data)
+            var ret = null;
+            $.each(json_example_data, function (item, value)
             {
-                if (json_example_data[item].ID == id)
+                if (value.ID == id)
                 {
-                    return json_example_data[item];
+                    ret = value;
+                    return false;
                 }
-            }
+            });
 
-            return null;
+            return ret;
         }
 
 
