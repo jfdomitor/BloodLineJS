@@ -39,7 +39,7 @@
         {
             if (json_example_data[item].ID == 'ID1')
             {
-                createPerson(350, 100, json_example_data[item].ID, json_example_data[item].FullName + "\n Born " + json_example_data[item].BirthDate);
+                createPerson(350, 100, json_example_data[item].ID, json_example_data[item].FullName + "\n Born " + json_example_data[item].BirthDate, json_example_data[item]);
                 AddFamily(json_example_data[item]);
                 break;
             }
@@ -63,13 +63,13 @@
                 {
                     motherid = person.Relatives[rel].ID;
                     var wife = getPersonByID(person.Relatives[rel].ID);
-                    createPartner(wife.ID, wife.FullName + "\nBorn " + wife.BirthDate, person.ID);
+                    createPartner(wife.ID, wife.FullName + "\nBorn " + wife.BirthDate, person.ID, wife);
                      break;
                 }
                 if (person.Relatives[rel].Type == 'HUSB') {
                     fatherid = person.Relatives[rel].ID;
                     var husb = getPersonByID(person.Relatives[rel].ID);
-                    createPartner(husb.ID, husb.FullName + "\nBorn " + husb.BirthDate, person.ID);
+                    createPartner(husb.ID, husb.FullName + "\nBorn " + husb.BirthDate, person.ID, husb);
                     break;
                 }
             }
@@ -86,16 +86,16 @@
 
                     if (motherid == "NONE" && fatherid != "NONE")
                     {
-                        createChild(child.ID, child.FullName + "\nBorn " + child.BirthDate, null, fatherid);
+                        createChild(child.ID, child.FullName + "\nBorn " + child.BirthDate, null, fatherid, child);
                     }
                     else if (motherid != "NONE" && fatherid == "NONE")
                     {
 
-                        createChild(child.ID, child.FullName + "\nBorn " + child.BirthDate, motherid, null);
+                        createChild(child.ID, child.FullName + "\nBorn " + child.BirthDate, motherid, null, child);
                     }
                     else
                     {
-                        createChild(child.ID, child.FullName + "\nBorn " + child.BirthDate, motherid, fatherid);
+                        createChild(child.ID, child.FullName + "\nBorn " + child.BirthDate, motherid, fatherid, child);
                     }
 
                     AddFamily(child);
