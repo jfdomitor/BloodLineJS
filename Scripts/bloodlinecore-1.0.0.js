@@ -27,9 +27,9 @@ function createRelationBox(pos_x, pos_y, id) {
 }
 
 
-function createObjectBox(pos_x, pos_y, id, label, object_data) {
+function createObjectBox(pos_x, pos_y,  object_data) {
     var div = document.createElement("div");
-    div.id = id;
+    div.id = object_data.ID;
 
     if (typeof object_data != "undefined" && object_data.hasOwnProperty('Gender'))
     {
@@ -55,7 +55,7 @@ function createObjectBox(pos_x, pos_y, id, label, object_data) {
     var paragraph = document.createElement("p");
     paragraph.setAttribute('class', 'chartobject_paragraph')
 
-    paragraph.innerText = label || '';
+    paragraph.innerText = object_data.FullName + '\nBorn '+object_data.BirthDate  || '';
     div.appendChild(paragraph);
 
     maincontainer.append(div);
