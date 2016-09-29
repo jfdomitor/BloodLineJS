@@ -1,0 +1,130 @@
+﻿<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+    <script src="Scripts/bloodlinecore-1.0.0.js"></script>
+    <script src="Scripts/bloodline-1.0.0.js"></script>
+    <script src="Scripts/json_example_data.js"></script>
+    <script src="Scripts/jquery-3.1.0.js"></script>
+    <link href="CSS/bloodline.css" rel="stylesheet" />
+
+</head>
+<body>
+
+
+
+    <!-- DECLARE CHART AREA-->
+    <div id="chartcontainer"></div>
+
+    <script>
+
+
+        //REGISTER CHART AREA
+        registerBloodLineContainer('chartcontainer');
+
+
+        //EXAMPLE BUILD TREE FROM JSON DATA
+        for (item in json_example_data)
+        {
+            if (json_example_data[item].ID == 'ID1')
+            {
+                createPerson(350, 100, json_example_data[item].ID, json_example_data[item].FullName + "\n Born " + json_example_data[item].BirthDate);
+                AddFamily(json_example_data[item]);
+                break;
+            }
+        }
+
+
+
+        function AddFamily(person)
+        {
+            var motherid = "NONE";
+            var fatherid = "NONE";
+
+            if (person.Gender == "M")
+                fatherid = person.ID;
+            if (person.Gender == "F")
+                motherid = person.ID;
+
+            for (rel in person.Relatives)
+            {
+                if (person.Relatives[rel].Type == 'WIFE')
+                {
+                    motherid = person.Relatives[rel].ID;
+                    var wife = getPersonByID(person.Relatives[rel].ID);
+                    createPartner(wife.ID, wife.FullName + "\nBorn " + wife.BirthDate, person.ID);
+                     break;
+                }
+                if (person.Relatives[rel].Type == 'HUSB') {
+                    fatherid = person.Relatives[rel].ID;
+                    var husb = getPersonByID(person.Relatives[rel].ID);
+                    createPartner(husb.ID, husb.FullName + "\nBorn " + husb.BirthDate, person.ID);
+                    break;
+                }
+            }
+
+
+            for (rel in person.Relatives)
+            {
+                if (person.Relatives[rel].Type == 'CHILD')
+                {
+                    var child = getPersonByID(person.Relatives[rel].ID);
+
+                    if (motherid == "NONE" && fatherid == "NONE")
+                        continue;
+
+                    if (motherid == "NONE" && fatherid != "NONE")
+                    {
+                        createChild(child.ID, child.FullName + "\nBorn " + child.BirthDate, null, fatherid);
+                    }
+                    else if (motherid != "NONE" && fatherid == "NONE")
+                    {
+
+                        createChild(child.ID, child.FullName + "\nBorn " + child.BirthDate, motherid, null);
+                    }
+                    else
+                    {
+                        createChild(child.ID, child.FullName + "\nBorn " + child.BirthDate, motherid, fatherid);
+                    }
+
+                    AddFamily(child);
+
+                 }
+             }
+
+        }
+
+        function getPersonByID(id)
+        {
+            for (item in json_example_data)
+            {
+                if (json_example_data[item].ID == id)
+                {
+                    return json_example_data[item];
+                }
+            }
+
+            return null;
+        }
+
+
+
+
+
+
+
+        $(document).ready(function ()
+        {
+            DrawTree();
+        });
+
+        $(window).resize(function () {
+
+            DrawTree();
+        });
+
+    </script>
+</body>
+</html>
