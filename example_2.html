@@ -24,8 +24,17 @@
         //REGISTER CHART AREA
         registerBloodLineContainer('chartcontainer');
 
+        $(document).ready(function () {
+            DrawTree();
+        });
 
-        //EXAMPLE BUILD TREE FROM JSON DATA
+        $(window).resize(function () {
+
+            DrawTree();
+        });
+
+        /********************  EXAMPLE: BUILD TREE FROM JSON DATA */
+        
         for (item in json_example_data)
         {
             if (json_example_data[item].ID == 'ID1')
@@ -111,19 +120,11 @@
 
 
 
+        /*****************************************************************************/
 
 
 
-
-        $(document).ready(function ()
-        {
-            DrawTree();
-        });
-
-        $(window).resize(function () {
-
-            DrawTree();
-        });
+     
 
     </script>
 </body>
