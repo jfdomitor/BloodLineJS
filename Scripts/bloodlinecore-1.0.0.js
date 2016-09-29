@@ -366,30 +366,25 @@ function DrawTree()
     $("#mainSVG").attr("height", "0");
     $("#mainSVG").attr("width", "0");
 
-    if (document.getElementById("mainSVG").children.length > 0)
+    $("#mainSVG").children().each(function (i, svgcontent)
     {
-        for (i = 0; i < document.getElementById("mainSVG").children.length; i++)
-        {
+        //var svgcontent = document.getElementById("mainSVG").children[i];
+        var pathtype = $("#" + svgcontent.id).data("PATHTYPE");
+        var divarr = svgcontent.id.split("_");
 
-            var svgcontent = document.getElementById("mainSVG").children[i];
-            var pathtype = $("#" + svgcontent.id).data("PATHTYPE");
-            var divarr = svgcontent.id.split("_");
+        //alert(divarr[1]+' - ' + divarr[2]);
 
-            //alert(divarr[1]+' - ' + divarr[2]);
-
-            if (pathtype == "CHILD_TO_PARENT" || pathtype == "PARENT_TO_CHILD")
-            {
-                connectGeneaologyParentChild(divarr[1],divarr[2]);
-            }
-
-            if (pathtype == "PARTNER_TO_PARTNER")
-            {
-                connectGeneaologyPartners(divarr[1], divarr[2]);
-            }
-
-           
+        if (pathtype == "CHILD_TO_PARENT" || pathtype == "PARENT_TO_CHILD") {
+            connectGeneaologyParentChild(divarr[1], divarr[2]);
         }
-    }
+
+        if (pathtype == "PARTNER_TO_PARTNER") {
+            connectGeneaologyPartners(divarr[1], divarr[2]);
+        }
+
+    });
+
+   
    
 }
 
@@ -411,48 +406,4 @@ function handle_canvas_Drop(ev) {
 
 
 
-/*
 
-
-function drawPath(path, startX, startY, endX, endY)
-{
-    var pathtype = $(path).data("PATHTYPE");
-
-    // get the path's stroke width (if one wanted to be  really precize, one could use half the stroke size)
-    var stroke = parseFloat(path.attr("stroke-width"));
-    // check if the svg is big enough to draw the path, if not, set heigh/width
-    if (svgcontainer.attr("height") < endY) svgcontainer.attr("height", endY);
-    if (svgcontainer.attr("width") < (startX + stroke)) svgcontainer.attr("width", (startX + stroke));
-    if (svgcontainer.attr("width") < (endX + stroke)) svgcontainer.attr("width", (endX + stroke));
-
-    var deltaX = (endX - startX) * 0.15;
-    var deltaY = (endY - startY) * 0.15;
-    // for further calculations which ever is the shortest distance
-    var delta = deltaY < absolute(deltaX) ? deltaY : absolute(deltaX);
-
-    // set sweep-flag (counter/clock-wise)
-    // if start element is closer to the left edge,
-    // draw the first arc counter-clockwise, and the second one clock-wise
-    var arc1 = 0; var arc2 = 1;
-    if (startX > endX) {
-        arc1 = 1;
-        arc2 = 0;
-    }
-
-    // draw tha pipe-like path
-    // 1. move a bit down, 2. arch,  3. move a bit to the right, 4.arch, 5. move down to the end 
-    path.attr("d", "M" + startX + " " + startY +
-                    " V" + (startY + delta) +
-                    " A" + delta + " " + delta + " 0 0 " + arc1 + " " + (startX + delta * signum(deltaX)) + " " + (startY + 2 * delta) +
-                    " H" + (endX - delta * signum(deltaX)) +
-                    " A" + delta + " " + delta + " 0 0 " + arc2 + " " + endX + " " + (startY + 3 * delta) +
-                    " V" + endY);
-
-    if (pathtype == "PARTNER_TO_PARTNER")
-    {
-        path.attr("d", "M" + startX + " " + startY + " H" + (endX - delta * signum(deltaX)));
-    }
-}
-
-
-*/
