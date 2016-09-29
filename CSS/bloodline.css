@@ -1,4 +1,4 @@
-﻿body
+body
 {
      background-color:antiquewhite;
 
@@ -13,6 +13,22 @@
 div.chartobject 
 {
     background-color: lightblue;
+    border:2px solid black;
+    width:170px; 
+    height:60px;
+} 
+
+div.malechartobject 
+{
+    background-color: lightblue;
+    border:2px solid black;
+    width:170px; 
+    height:60px;
+} 
+
+div.femalechartobject 
+{
+    background-color: pink;
     border:2px solid black;
     width:170px; 
     height:60px;
