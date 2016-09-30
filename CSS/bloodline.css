@@ -1,4 +1,4 @@
-body
+﻿body
 {
      background-color:antiquewhite;
 
@@ -39,4 +39,5 @@ p.chartobject_paragraph
     font-family:Tahoma;
     font-size: small;
     margin:2px;
+    cursor: pointer;
 }
