@@ -19,10 +19,17 @@
     <script>
 
 
+        
+
         //REGISTER CHART AREA
-        registerBloodLineContainer('chartcontainer');
+        registerBloodLineContainer('chartcontainer', handleNodeClicked);
 
-
+        //NODE CLICK EVENTHANDLER
+        function handleNodeClicked(event, node)
+        {
+            var x = $("#" + node.parentElement.id).data("OBJECT_DATA");
+            alert(x.FullName);
+        }
 
         //CREATE TREE MANUALLY
         createPerson(350, 100, { "ID": "ID1", "FullName": "Barack Hussein Obama", "FirstName": "Barack", "LastName": "Obama", "BirthDate": "Apr 4, 1936", "Gender": "M" });
@@ -31,9 +38,9 @@
         createPartner({ "ID": "ID4", "FullName": "Michelle Obama", "FirstName": "Michelle", "LastName": "Obama", "BirthDate": "Jan 17 1964", "Gender": "F" }, 'ID3');
         createChild({"ID": "ID5", "FullName": "Malia Obama", "FirstName": "Malia", "LastName": "Obama", "BirthDate": "JUL 4 1998", "Gender": "F" }, 'ID4', null);
         createChild({ "ID": "ID6", "FullName": "Sasha Obama", "FirstName": "Sasha", "LastName": "Obama", "BirthDate": "Jun 10 2001", "Gender": "F" }, 'ID4', null);
+        createPartner({ "ID": "ID7", "FullName": "X", "FirstName": "X", "LastName": "Johnson", "BirthDate": "1998", "Gender": "M" }, 'ID5');
 
-
-
+      
 
         $(document).ready(function ()
         {

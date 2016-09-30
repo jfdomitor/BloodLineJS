@@ -22,7 +22,14 @@
 
 
         //REGISTER CHART AREA
-        registerBloodLineContainer('chartcontainer');
+        registerBloodLineContainer('chartcontainer', handleNodeClicked);
+
+        //NODE CLICK EVENTHANDLER
+        function handleNodeClicked(event, node)
+        {
+            var x = $("#" + node.parentElement.id).data("OBJECT_DATA");
+            alert(x.FullName);
+        }
 
         $(document).ready(function () {
             DrawTree();
