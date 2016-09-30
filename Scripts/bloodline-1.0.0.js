@@ -1,29 +1,8 @@
 
-//SETTINGS
-var linecolor = "black";
-var linewidth = "6";
 
-
-function registerBloodLineContainer(container_id) {
-    if (typeof maincontainer != 'undefined')
-        return;
-
-    maincontainer = $("#" + container_id);
-    if (typeof maincontainer == 'undefined')
-        return;
-
-    maincontainer.attr('id', 'chartcontainer');
-    maincontainer.attr('ondragover', 'handle_Dragover(event)');
-    maincontainer.attr('ondrop', 'handleObjectDrop(event)');
-
-    var svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-    svg.setAttribute('id', 'mainSVG');
-    svg.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
-
-    maincontainer.append(svg);
-    svgcontainer = $("#mainSVG");
-
-
+function registerBloodLineContainer(container_id, node_click_callback)
+{
+    registerContainer(container_id, node_click_callback);
 }
 
 
@@ -31,7 +10,8 @@ function createPerson(pos_x, pos_y, person) {
     createObjectBox(pos_x, pos_y, person);
     $("#" + person.ID).data("PARTNER_RELID", '');
     $("#" + person.ID).data("PARTNER_RELID", '');
-    $("#" + person.ID).data("HAS_RENDERED_CHILDREN", 'NO');
+    $("#" + person.ID).data("OBJECT_DATA", person);
+
 }
 
 function createPartner(person, partner_id) {
@@ -40,14 +20,14 @@ function createPartner(person, partner_id) {
 
     var relationdiv_id = "PARTNER-" + person.ID + "-" + partner_id;
 
-    createRelationBox(rect.left + 220, rect.top + 26, relationdiv_id);
-    createObjectBox(rect.left + 290, rect.top, person);
+    createRelationBox(rect.left + partner.clientWidth + object_space, rect.top + 27, relationdiv_id);
+    createObjectBox(rect.left + partner.clientWidth + object_space + relation_div_width + object_space, rect.top, person);
     createObjectLine(partner_id, relationdiv_id, "PARTNER_TO_PARTNER");
     createObjectLine(person.ID, relationdiv_id, "PARTNER_TO_PARTNER");
 
     $("#" + partner_id).data("PARTNER_RELID", relationdiv_id);
     $("#" + person.ID).data("PARTNER_RELID", relationdiv_id);
-    $("#" + person.ID).data("HAS_RENDERED_CHILDREN", 'NO');
+    $("#" + person.ID).data("OBJECT_DATA", person);
 
 
 }
@@ -57,11 +37,10 @@ function createChild(person, mother_id, father_id) {
     var rect = parent.getBoundingClientRect();
     var parent_partner_rel = $("#" + parent.id).data("PARTNER_RELID");
     var parent_has_rendered_children = $("#" + parent.id).data("HAS_RENDERED_CHILDREN");
-    //if (parent_has_rendered_children == "NO")
-    //   last_x = 0;
+   
 
-    createObjectBox(last_x + 270, rect.top + 110, person);
+    createObjectBox(last_x + parent.clientWidth + object_space, rect.top + parent.clientHeight + level_space, person);
     createObjectPath(person.ID, parent_partner_rel, "CHILD_TO_PARENT");
 
-    $("#" + parent.id).data("HAS_RENDERED_CHILDREN", "YES");
+    $("#" + person.ID).data("OBJECT_DATA", person);
 }

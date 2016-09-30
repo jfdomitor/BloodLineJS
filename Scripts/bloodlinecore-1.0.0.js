@@ -4,36 +4,96 @@
 var maincontainer;
 var svgcontainer;
 var last_x = 0;
-var last_y = 0;
+var object_space = 40;
+var level_space = 60;
+var relation_div_width = 20;
+var relationdiv_height = 10;
+var linecolor = "black";
+var linewidth = "4";
+var allow_dragdrop = false;
+var OnNodeClick;
 
 
 
 /****************** PRIVATE ******/
 
+
+
+
+function registerContainer(container_id, node_click_callback) {
+    if (typeof maincontainer != 'undefined')
+        return;
+
+    OnNodeClick = node_click_callback;
+
+    maincontainer = $("#" + container_id);
+    if (typeof maincontainer == 'undefined')
+        return;
+
+    maincontainer.attr('id', 'chartcontainer');
+    maincontainer.attr('ondragover', 'handle_Dragover(event)');
+    maincontainer.attr('ondrop', 'handleObjectDrop(event)');
+
+    var svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+    svg.setAttribute('id', 'mainSVG');
+    svg.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
+
+    maincontainer.append(svg);
+    svgcontainer = $("#mainSVG");
+
+
+}
+
+
 function createRelationBox(pos_x, pos_y, id) {
     var div = document.createElement("div");
     div.id = id;
 
-    div.setAttribute('style', 'background-color:black;position:absolute; top:' + pos_y + 'px; left:' + pos_x + 'px;width:20px;height:10px');
-    div.setAttribute('ondrop', 'handleObjectDrop(event)');
-    div.setAttribute('ondragover', 'handle_Dragover(event)');
-    div.setAttribute('draggable', 'true');
-    div.setAttribute('ondragstart', 'handle_Dragstart(event)');
+    div.setAttribute('style', 'background-color:' + linecolor + ';position:absolute; top:' + pos_y + 'px; left:' + pos_x + 'px;width:' + relation_div_width + 'px;height:' + relationdiv_height + 'px');
+
+    if (allow_dragdrop)
+    {
+        div.setAttribute('ondrop', 'handleObjectDrop(event)');
+        div.setAttribute('ondragover', 'handle_Dragover(event)');
+        div.setAttribute('draggable', 'true');
+        div.setAttribute('ondragstart', 'handle_Dragstart(event)');
+    }
 
     maincontainer.append(div);
 
     last_x = pos_x;
-    last = pos_y;
+
 }
 
 
 function createObjectBox(pos_x, pos_y,  object_data) {
+   
+  
+
+    var test = document.elementFromPoint(pos_x, pos_y)
+    if (test)
+    {
+        if (test.id != "chartcontainer")
+        {
+            $("#chartcontainer").children('div').each(function (i, box) {
+
+                //alert(box.id);
+                if (box.offsetLeft + box.clientWidth >= pos_x)
+                {
+                    var rect = box.getBoundingClientRect();
+                    box.setAttribute('style', 'position:absolute; top:' + pos_y + 'px; left:' + (rect.left + box.clientWidth + (object_space * 2)) + 'px');
+                }
+
+            });
+        }
+    }
+
     var div = document.createElement("div");
     div.id = object_data.ID;
 
     if (typeof object_data != "undefined" && object_data.hasOwnProperty('Gender'))
     {
-        $("#" + div.id).data("OBJECT_DATA", object_data);
+      
 
         if (object_data.Gender == "M")
             div.setAttribute('class', 'malechartobject');
@@ -47,20 +107,31 @@ function createObjectBox(pos_x, pos_y,  object_data) {
 
   
     div.setAttribute('style', 'position:absolute; top:' + pos_y + 'px; left:' + pos_x + 'px');
-    div.setAttribute('ondrop', 'handleObjectDrop(event)');
-    div.setAttribute('ondragover', 'handle_Dragover(event)');
-    div.setAttribute('draggable', 'true');
-    div.setAttribute('ondragstart', 'handle_Dragstart(event)');
 
-    var paragraph = document.createElement("p");
-    paragraph.setAttribute('class', 'chartobject_paragraph')
+    if (allow_dragdrop)
+    {
+        div.setAttribute('ondrop', 'handleObjectDrop(event)');
+        div.setAttribute('ondragover', 'handle_Dragover(event)');
+        div.setAttribute('draggable', 'true');
+        div.setAttribute('ondragstart', 'handle_Dragstart(event)');
+    }
 
-    paragraph.innerText = object_data.FullName + '\nBorn '+object_data.BirthDate  || '';
-    div.appendChild(paragraph);
+    var fullname = document.createElement("p");
+    fullname.id = object_data.ID + "-FULLNAME";
+    fullname.setAttribute('class', 'chartobject_paragraph');
+    fullname.setAttribute('onClick', 'OnNodeClick(event, this)')
+    fullname.innerText = object_data.FullName || '';
+    div.appendChild(fullname);
+
+    var birthdate = document.createElement("p");
+    birthdate.id = object_data.ID + "-BIRTHDATE";
+    birthdate.setAttribute('class', 'chartobject_paragraph');
+    birthdate.innerText = object_data.BirthDate || '';
+    div.appendChild(birthdate);
 
     maincontainer.append(div);
 
-   
+
 
     last_x = pos_x;
     last = pos_y;
@@ -158,9 +229,8 @@ function connectGeneaologyPartners(div1_id, div2_id)
     var endElem = $("#" + div2_id);
 
 
-
     // if first element is lower than the second, swap!
-    if (startElem.offset().top > endElem.offset().top) {
+    if (startElem.offset().left < endElem.offset().left) {
         var temp = startElem;
         startElem = endElem;
         endElem = temp;
@@ -188,21 +258,12 @@ function connectGeneaologyPartners(div1_id, div2_id)
     if (svgcontainer.attr("width") < (startX + stroke)) svgcontainer.attr("width", (startX + stroke));
     if (svgcontainer.attr("width") < (endX + stroke)) svgcontainer.attr("width", (endX + stroke));
 
-    var deltaX = (endX - startX) * 0.15;
-    var deltaY = (endY - startY) * 0.15;
 
-    // for further calculations which ever is the shortest distance
-    var delta = deltaY < absolute(deltaX) ? deltaY : absolute(deltaX);
+    if (svgcontainer.attr("width") < endX) svgcontainer.attr("width", endX);
+    if (svgcontainer.attr("height") < (startY + stroke)) svgcontainer.attr("height", (startY + stroke));
+    if (svgcontainer.attr("height") < (endY + stroke)) svgcontainer.attr("height", (endY + stroke));
 
-
-    // set sweep-flag (counter/clock-wise)
-    // if start element is closer to the left edge,
-    // draw the first arc counter-clockwise, and the second one clock-wise
-    var arc1 = 0; var arc2 = 1;
-    if (startX > endX) {
-        arc1 = 1;
-        arc2 = 0;
-    }
+   
 
     line.attr("x1", startX);
     line.attr("y1", startY);
@@ -368,7 +429,6 @@ function DrawTree()
 
     $("#mainSVG").children().each(function (i, svgcontent)
     {
-        //var svgcontent = document.getElementById("mainSVG").children[i];
         var pathtype = $("#" + svgcontent.id).data("PATHTYPE");
         var divarr = svgcontent.id.split("_");
 
@@ -388,21 +448,6 @@ function DrawTree()
    
 }
 
-
-
-function handle_canvas_Drop(ev) {
-
-    var transdata = JSON.parse(ev.dataTransfer.getData("text"));
-    var element = document.getElementById(transdata.dragged_id);
-    //ev.target.appendChild(element);
-
-    element.setAttribute('style', 'border:1px solid #c3c3c3;position:absolute; top:' + (ev.clientY + parseInt(transdata.topoffset, 10)) + 'px; left:' + (ev.clientX + parseInt(transdata.leftoffset, 10)) + 'px;');
-    //dm.style.left = (event.clientX + parseInt(data.leftoffset, 10)) + 'px';
-    //dm.style.top = (event.clientY + parseInt(data.topoffset, 10)) + 'px';
-
-    event.preventDefault();
-    return false;
-}
 
 
 
