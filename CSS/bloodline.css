@@ -34,10 +34,33 @@ div.femalechartobject
     height:60px;
 } 
 
+div.relationchartobject 
+{
+    background-color: black;
+    width:20px; 
+    height:10px;
+} 
+
 p.chartobject_paragraph
 {
     font-family:Tahoma;
     font-size: small;
     margin:2px;
     cursor: pointer;
+}
+
+path
+{
+    fill: none;
+    stroke: black;
+    stroke-width: 4px;
+
+}
+
+line
+{
+
+     fill: none;
+    stroke: black;
+    stroke-width: 4px;
 }
