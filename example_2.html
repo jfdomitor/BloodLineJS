@@ -75,7 +75,7 @@
                 }
                 if (value.Type == 'HUSB') {
                     fatherid = value.ID;
-                    var husb = getPersonByID(person.Relatives[rel].ID);
+                    var husb = getPersonByID(value.ID);
                     createPartner(husb, person.ID);
                 }
             });
