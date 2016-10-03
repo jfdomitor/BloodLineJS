@@ -6,16 +6,12 @@ var svgcontainer;
 var last_x = 0;
 var object_space = 40;
 var level_space = 60;
-var relation_div_width = 20;
-var relationdiv_height = 10;
-var linecolor = "black";
-var linewidth = "4";
 var allow_dragdrop = false;
 var OnNodeClick;
 
 
 
-/****************** PRIVATE ******/
+
 
 
 
@@ -49,7 +45,8 @@ function createRelationBox(pos_x, pos_y, id) {
     var div = document.createElement("div");
     div.id = id;
 
-    div.setAttribute('style', 'background-color:' + linecolor + ';position:absolute; top:' + pos_y + 'px; left:' + pos_x + 'px;width:' + relation_div_width + 'px;height:' + relationdiv_height + 'px');
+    div.setAttribute('style', 'position:absolute; top:' + pos_y + 'px; left:' + pos_x + 'px');
+    div.setAttribute('class', 'relationchartobject');
 
     if (allow_dragdrop)
     {
@@ -144,9 +141,6 @@ function createObjectPath(obj1_id, obj2_id, pathtype)
     var p = document.createElementNS(svgNS,"path");
     p.setAttributeNS(null, 'id', 'path_' + obj1_id + '_' + obj2_id);
     p.setAttributeNS(null, 'd', 'M0 0');
-    p.setAttributeNS(null, 'fill', 'none');
-    p.setAttributeNS(null, 'stroke', linecolor);
-    p.setAttributeNS(null, 'stroke-width', linewidth + 'px');
 
     svgcontainer.append(p);
 
@@ -159,10 +153,7 @@ function createObjectLine(obj1_id, obj2_id, pathtype) {
     var svgNS = "http://www.w3.org/2000/svg"
     var line = document.createElementNS(svgNS, "line");
     line.setAttributeNS(null, 'id', 'line_' + obj1_id + '_' + obj2_id);
-    line.setAttributeNS(null, 'fill', 'none');
-    line.setAttributeNS(null, 'stroke', linecolor);
-    line.setAttributeNS(null, 'stroke-width', linewidth + 'px');
-
+   
     svgcontainer.append(line);
 
     $("#" + line.id).data("PATHTYPE", pathtype);
@@ -250,18 +241,9 @@ function connectGeneaologyPartners(div1_id, div2_id)
     var endX = endCoord.left - svgLeft;
     var endY = endCoord.top + (0.5 * endElem.outerHeight()) - svgTop;
 
-
-    var stroke = parseFloat(line.attr("stroke-width"));
-
     // check if the svg is big enough to draw the path, if not, set heigh/width
-    if (svgcontainer.attr("height") < endY) svgcontainer.attr("height", endY);
-    if (svgcontainer.attr("width") < (startX + stroke)) svgcontainer.attr("width", (startX + stroke));
-    if (svgcontainer.attr("width") < (endX + stroke)) svgcontainer.attr("width", (endX + stroke));
-
-
-    if (svgcontainer.attr("width") < endX) svgcontainer.attr("width", endX);
-    if (svgcontainer.attr("height") < (startY + stroke)) svgcontainer.attr("height", (startY + stroke));
-    if (svgcontainer.attr("height") < (endY + stroke)) svgcontainer.attr("height", (endY + stroke));
+    if (svgcontainer.attr("width") < endX + object_space) svgcontainer.attr("width", endX + object_space);
+    if (svgcontainer.attr("height") < (endY + object_space)) svgcontainer.attr("height", (endY + object_space));
 
    
 
@@ -306,13 +288,9 @@ function connectGeneaologyParentChild(div1_id, div2_id)
     var endX = endCoord.left + 0.5 * endElem.outerWidth() - svgLeft;
     var endY = endCoord.top - svgTop;
 
-
-    var stroke = parseFloat(path.attr("stroke-width"));
-
     // check if the svg is big enough to draw the path, if not, set heigh/width
-    if (svgcontainer.attr("height") < endY) svgcontainer.attr("height", endY);
-    if (svgcontainer.attr("width") < (startX + stroke)) svgcontainer.attr("width", (startX + stroke));
-    if (svgcontainer.attr("width") < (endX + stroke)) svgcontainer.attr("width", (endX + stroke));
+    if (svgcontainer.attr("height") < endY + object_space) svgcontainer.attr("height", endY + object_space);
+    if (svgcontainer.attr("width") < (endX + object_space)) svgcontainer.attr("width", (endX + object_space));
 
     var deltaX = (endX - startX) * 0.15;
     var deltaY = (endY - startY) * 0.15;
@@ -381,12 +359,9 @@ function connectDefault(div1_id, div2_id)
     var endY = endCoord.top - svgTop;
 
 
-    var stroke = parseFloat(path.attr("stroke-width"));
-
     // check if the svg is big enough to draw the path, if not, set heigh/width
-    if (svgcontainer.attr("height") < endY) svgcontainer.attr("height", endY);
-    if (svgcontainer.attr("width") < (startX + stroke)) svgcontainer.attr("width", (startX + stroke));
-    if (svgcontainer.attr("width") < (endX + stroke)) svgcontainer.attr("width", (endX + stroke));
+    if (svgcontainer.attr("height") < endY + object_space) svgcontainer.attr("height", endY + object_space);
+    if (svgcontainer.attr("width") < (endX + object_space)) svgcontainer.attr("width", (endX + object_space));
 
     var deltaX = (endX - startX) * 0.15;
     var deltaY = (endY - startY) * 0.15;

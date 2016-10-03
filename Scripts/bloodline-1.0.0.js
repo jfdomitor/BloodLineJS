@@ -1,8 +1,93 @@
 
 
+/*
+Register the div where you want to draw the bloodline chart
+*/
 function registerBloodLineContainer(container_id, node_click_callback)
 {
     registerContainer(container_id, node_click_callback);
+}
+
+/*
+Draws a tree (top down) based on a json object array, see documentation
+*/
+function createTree(top_person_id, top_person_pos_x, top_person_pos_y, person_array)
+{
+
+    $.each(person_array, function (item, value)
+    {
+        if (value.ID == top_person_id) {
+            createPerson(top_person_pos_x, top_person_pos_y, value);
+            AddFamilyMembers(value, person_array);
+        }
+
+    });
+
+
+    function AddFamilyMembers(person, person_array)
+    {
+        var motherid = "NONE";
+        var fatherid = "NONE";
+
+        if (person.Gender == "M")
+            fatherid = person.ID;
+        if (person.Gender == "F")
+            motherid = person.ID;
+
+        $.each(person.Relatives, function (item, value)
+        {
+            if (value.Type == 'WIFE') {
+                motherid = value.ID;
+                var wife = findPersonByID(value.ID, person_array);
+                createPartner(wife, person.ID);
+            }
+            if (value.Type == 'HUSB') {
+                fatherid = value.ID;
+                var husb = findPersonByID(value.ID, person_array);
+                createPartner(husb, person.ID);
+            }
+        });
+
+
+        $.each(person.Relatives, function (item, value) {
+            if (value.Type == 'CHILD') {
+                var child = findPersonByID(value.ID, person_array);
+
+                if (motherid == "NONE" && fatherid == "NONE")
+                    return true; //continue
+
+                if (motherid == "NONE" && fatherid != "NONE") {
+                    createChild(child, null, fatherid);
+                }
+                else if (motherid != "NONE" && fatherid == "NONE") {
+
+                    createChild(child, motherid, null);
+                }
+                else {
+                    createChild(child, motherid, fatherid);
+                }
+
+                AddFamilyMembers(child, person_array);
+            }
+        });
+
+    }
+
+  
+
+}
+
+
+function findPersonByID(id, person_array) {
+    var ret = null;
+    $.each(person_array, function (item, value) {
+        if (value.ID == id) {
+            ret = value;
+            return false;
+        }
+    });
+
+    return ret;
 }
 
 
@@ -16,12 +101,16 @@ function createPerson(pos_x, pos_y, person) {
 
 function createPartner(person, partner_id) {
     var partner = document.getElementById(partner_id);
-    var rect = partner.getBoundingClientRect();
+    var partnerrect = partner.getBoundingClientRect();
 
     var relationdiv_id = "PARTNER-" + person.ID + "-" + partner_id;
 
-    createRelationBox(rect.left + partner.clientWidth + object_space, rect.top + 27, relationdiv_id);
-    createObjectBox(rect.left + partner.clientWidth + object_space + relation_div_width + object_space, rect.top, person);
+    createRelationBox(partnerrect.left + partner.clientWidth + object_space, partnerrect.top + 27, relationdiv_id);
+
+    var relation = document.getElementById(relationdiv_id);
+    var relrect = relation.getBoundingClientRect();
+
+    createObjectBox(partnerrect.left + partner.clientWidth + object_space + relrect.width + object_space, partnerrect.top, person);
     createObjectLine(partner_id, relationdiv_id, "PARTNER_TO_PARTNER");
     createObjectLine(person.ID, relationdiv_id, "PARTNER_TO_PARTNER");
 
