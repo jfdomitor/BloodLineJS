@@ -1,0 +1,49 @@
+﻿<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+    <link href="../CSS/bloodline.css" rel="stylesheet" />
+</head>
+<body>
+
+
+
+    <!-- DECLARE CHART AREA-->
+    <div id="chartcontainer"></div>
+
+    <script src="../examples/exampledata.js"></script>
+    <script src="../bloodline.js"></script>
+    <script>
+
+        const app = getApp();
+
+        //REGISTER CHART AREA
+        app.registerContainer('chartcontainer', handleNodeClicked);
+
+        //NODE CLICK EVENTHANDLER
+        function handleNodeClicked(event, node)
+        {
+            var x = $("#" + node.parentElement.id).data("OBJECT_DATA");
+            alert(x.FullName);
+        }
+
+        document.addEventListener("DOMContentLoaded", function () 
+        {
+            app.drawTree();
+        });
+
+        window.addEventListener("resize", function () 
+        {
+            app.drawTree();
+        });
+
+
+        app.createTree("ID1", 500, 100, getExampleData());
+
+
+
+    </script>
+</body>
+</html>
