@@ -8,6 +8,3 @@ An easy to use java script lib for drawing family trees
 * Easy integration with your site (see example files).
 * Support for IE11+ and Chrome (other browsers not tested)
 
-
-# Third party dependencies
--JQuery
