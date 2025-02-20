@@ -13,7 +13,7 @@ class BloodLineJS
     #last_y = 0;
     #objectSpace = 40;
     #levelSpace = 60;
-    #allowDragdrop = false;
+    #allowDragdrop = true;
 
     constructor()
     {
@@ -206,10 +206,10 @@ class BloodLineJS
 
         if (this.#allowDragdrop)
         {
-            div.addEventListener('ondrop', handleObjectDrop);
-            div.addEventListener('ondragover',handle_Dragover);
+            div.addEventListener('ondrop', this.#handleObjectDrop);
+            div.addEventListener('ondragover',this.#handleDragOver);
             div.setAttribute('draggable', 'true');
-            div.addEventListener('ondragstart', handle_Dragstart);
+            div.addEventListener('ondragstart', this.#handleDragStart);
         }
 
         this.#mainContainer.append(div);
@@ -259,16 +259,16 @@ class BloodLineJS
 
         if (this.#allowDragdrop)
         {
-            div.addEventListener('ondrop', handleObjectDrop);
-            div.addEventListener('ondragover', handleDragOver);
+            div.addEventListener('ondrop', this.#handleObjectDrop);
+            div.addEventListener('ondragover', this.#handleDragOver);
             div.setAttribute('draggable', 'true');
-            div.addEventListener('ondragstart', handleDragstart);
+            div.addEventListener('ondragstart', this.#handleDragStart);
         }
 
         let fullname = document.createElement("p");
         fullname.id = object_data.ID + "-FULLNAME";
         fullname.setAttribute('class', 'chartobject_paragraph');
-        fullname.setAttribute('onClick', 'OnNodeClick(event, this)')
+        fullname.addEventListener('onClick', this.#onNodeClick)
         fullname.innerText = object_data.FullName || '';
         div.appendChild(fullname);
 
@@ -341,7 +341,7 @@ class BloodLineJS
             element.setAttribute('style', 'position:absolute; top:' + (ev.clientY + parseInt(transdata.topoffset, 10)) + 'px; left:' + (ev.clientX + parseInt(transdata.leftoffset, 10)) + 'px');
         }
   
-        DrawTree();
+        drawTree();
 
         this.last_x = (ev.clientX + parseInt(transdata.leftoffset, 10));
         last = (ev.clientY + parseInt(transdata.topoffset, 10));
@@ -526,94 +526,7 @@ class BloodLineJS
         path.setAttribute("d", pathData);
     }
     
-      // #connectGeneaologyParentChild(div1_id, div2_id)
-    // {
-
-    //     let path = document.getElementById("path_" + div1_id + '_' + div2_id);
-    //     let startElem = document.getElementById(div1_id);
-    //     let endElem = document.getElementById(div2_id);
-
-
-    //     // if first element is lower than the second, swap!
-    //     if (startElem.getBoundingClientRect().top > endElem.getBoundingClientRect().top) {
-    //         let temp = startElem;
-    //         startElem = endElem;
-    //         endElem = temp;
-    //     }
-
-    //     // get (top, left) corner coordinates of the svg container   
-    //     let svgTop = this.#mainContainer.getBoundingClientRect().top;
-    //     let svgLeft = this.#mainContainer.getBoundingClientRect().left;
-
-    //     // get (top, left) coordinates for the two elements
-    //     let startCoord = startElem.getBoundingClientRect();
-    //     let endCoord = endElem.getBoundingClientRect();
-
-    //     // calculate path's start (x,y)  coords
-    //     // we want the x coordinate to visually result in the element's mid point
-    //     let startX = startCoord.left + 0.5 * startElem.offsetWidth - svgLeft;    // x = left offset + 0.5*width - svg's left offset
-    //     let startY = startCoord.top + startElem.offsetHeight - svgTop;        // y = top offset + height - svg's top offset
-
-    //     // calculate path's end (x,y) coords
-    //     let endX = endCoord.left + 0.5 * endElem.offsetWidth - svgLeft;
-    //     let endY = endCoord.top - svgTop;
-
-    //     // check if the svg is big enough to draw the path, if not, set heigh/width
-    //     let svgheight = this.#svgContainer.getAttribute("width");
-    //     let svgwidth = this.#svgContainer.getAttribute("height");
-    //     if (svgheight < (endY + this.#objectSpace)) this.#svgContainer.setAttribute("height", endY + this.#objectSpace);
-    //     if (svgwidth < (endX + this.#objectSpace)) this.#svgContainer.setAttribute("width", (endX + this.#objectSpace));
-
-    //     let deltaX = (endX - startX) * 0.15;
-    //     let deltaY = (endY - startY) * 0.15;
-
-
-
-    //     // for further calculations which ever is the shortest distance
-    //     let delta = deltaY < this.#absolute(deltaX) ? deltaY : this.#absolute(deltaX);
-
-    //     //ADJUST CURVE LINES
-    //     delta += 10;
-
-    //     // set sweep-flag (counter/clock-wise)
-    //     // if start element is closer to the left edge,
-    //     // draw the first arc counter-clockwise, and the second one clock-wise
-    //     let arc1 = 0; let arc2 = 1;
-    //     if (startX > endX) {
-    //         arc1 = 1;
-    //         arc2 = 0;
-    //     }
-
-    //     // 1. move a bit down, 2. arch,  3. move a bit to the right, 4.arch, 5. move down to the end 
-    //     let info = "M" + startX + " " + startY +
-    //             " V" + (startY + delta) +
-    //             " A" + delta + " " + delta + " 0 0 " + arc1 + " " + (startX + delta * this.#signum(deltaX)) + " " + (startY + 2 * delta) +
-    //             " H" + (endX - delta * this.#signum(deltaX)) +
-    //             " A" + delta + " " + delta + " 0 0 " + arc2 + " " + endX + " " + (startY + 3 * delta) +
-    //             " V" + endY;
-
-    //     path.setAttribute("d",info);
-    
-    // }
-
-
-    // Helper function to update SVG size dynamically
-    // #updateSvgSize(endX, endY) {
-    //     const objectSpace = this.#objectSpace;
-    //     const svg = this.#svgContainer;
-    
-    //     if (parseFloat(svg.getAttribute("height") || 0) < endY + objectSpace) {
-    //         svg.setAttribute("height", endY + objectSpace);
-    //     }
-    //     if (parseFloat(svg.getAttribute("width") || 0) < endX + objectSpace) {
-    //         svg.setAttribute("width", endX + objectSpace);
-    //     }
-    // }
-    
-
-
-   
-
+     
 }
 
 
